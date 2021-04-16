@@ -1,10 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, {useState} from 'react';
 import { StyleSheet, Text, View, TextInput, Button, ScrollView, TouchableOpacity } from 'react-native';
 
 export default function App() {
-  const [text, onChangeText] = React.useState("Add a ToDo here!");
-  const items = ["shopping", "washing dishes"];
+  const [text, onChangeText] = useState('');
+  const [items, setItem] = useState([])
+  
+  const pressButtonHandler = () => {
+    setItem(items => [...items, text]);
+  }
+
   return (
     <View style={styles.container}>
       <View style={{flex:2}}>
@@ -15,14 +20,12 @@ export default function App() {
         <TextInput
           style={styles.input}
           onChangeText={onChangeText}
-          value={text}
           placeholder="Add ToDo here!"
         />
         <TouchableOpacity 
-          style={styles.button}
-          onPress={() => Alert.alert("Test")}
+          onPress={pressButtonHandler}
         >
-          <Text>Add</Text>
+          <Text style={styles.button}>ADD</Text>
         </TouchableOpacity>
       </View>
       <ScrollView style={[styles.scrollview], {  height: 400 }}>
@@ -53,7 +56,8 @@ const styles = StyleSheet.create({
     flex: 2,
     marginTop: 20,
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   input: {
     height: 40,
@@ -65,9 +69,12 @@ const styles = StyleSheet.create({
   },
   button: {
     height: 40,
-  },
-  buttonText: {
-    color: 'orange'
+    fontSize: 20,
+    color: 'white',
+    backgroundColor: 'orange',
+    padding: 8,
+    borderWidth: 1,
+    borderRadius: 5.0
   },
   scrollview:{
     flex: 2
