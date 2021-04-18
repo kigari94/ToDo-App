@@ -1,36 +1,54 @@
-import { StatusBar } from 'expo-status-bar';
-import React, {useState} from 'react';
-import { StyleSheet, Text, View, TextInput, Button, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 
 export default function App() {
-  const [text, onChangeText] = useState('');
+  const [text, setText] = useState('');
   const [items, setItem] = useState([])
-  
+
+  const onChangeTextHandler = enteredText => {
+    setText(enteredText);
+  };
+
   const pressButtonHandler = () => {
-    setItem(items => [...items, text]);
-  }
+    setItem(items => [...items, { id: Math.random().toString(), text: text }]);
+    setText('');
+  };
+
+  const pressItemHandler = id => {
+    setItem(items => {
+      return items.filter(item => item.id !== id)
+    });
+  };
 
   return (
     <View style={styles.container}>
-      <View style={{flex:2}}>
+      <View style={{ flex: 2 }}>
         <Text style={styles.headline}>My ToDo's</Text>
       </View>
-      {/* <StatusBar style="auto" /> */}
       <View style={styles.inputArea}>
         <TextInput
           style={styles.input}
-          onChangeText={onChangeText}
           placeholder="Add ToDo here!"
+          onChangeText={onChangeTextHandler}
+          value={text}
         />
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={pressButtonHandler}
         >
           <Text style={styles.button}>ADD</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView style={[styles.scrollview], {  height: 400 }}>
+      <ScrollView
+        style={styles.scrollview}
+        contentContainerStyle={styles.contentContainerStyle}>
         {items.map(item => (
-          <Text style={styles.listitem} key={Math.random().toString()}>{item}</Text>
+          <TouchableOpacity
+            key={item.id}
+            onPress={() => { pressItemHandler(item.id) }}
+            style={styles.listItemBox}
+          >
+            <Text>{item.text}</Text>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </View>
@@ -40,24 +58,24 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
-    marginTop: 20,
+    paddingHorizontal: 10,
+    paddingTop: 60,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'column'
+    alignItems: 'center'
   },
   headline: {
     fontSize: 45,
+    fontWeight: 'bold',
     color: 'orange',
-    flex: 1
+    marginBottom: 20
   },
   inputArea: {
-    flex: 2,
-    marginTop: 20,
+    marginTop: 70,
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
+    width: '80%',
+    marginBottom: 30
   },
   input: {
     height: 40,
@@ -76,12 +94,31 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5.0
   },
-  scrollview:{
-    flex: 2
+  scrollview: {
+    width: '80%',
+    height: 400
   },
-  listitem: {
+  contentContainerStyle: {
+    width: '100%',
+    alignItems: 'center'
+  },
+  listItemBox: {
+    flex: 1,
+    marginVertical: 15,
+    height: 50,
+    width: '80%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderRadius: 10,
+    shadowColor: 'black',
+    shadowOpacity: 0.26,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 10
+  },
+  listItemText: {
     fontSize: 20,
-    marginTop: 20,
-    flex: 1
+    marginTop: 10
   }
 });
